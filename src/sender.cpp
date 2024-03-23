@@ -63,6 +63,8 @@ void sender()
         //Wait for slave to be ready for next byte before sending
         xSemaphoreTake(rdySem, portMAX_DELAY); //Wait until slave is ready
         g_ret=spi_device_transmit(handle, &t);
+
+        UpdateTime(g_recbuf);
         //printf("Received: %s\n", g_recbuf);
     }
 
@@ -118,5 +120,18 @@ void SetUpHandShakeInterrupt()
     g_ret=spi_bus_initialize(SENDER_HOST, &g_buscfg, SPI_DMA_CH_AUTO);
     assert(g_ret==ESP_OK);
 }
+
+void UpdateTime(const char* time_buf)
+{
+    GetTime() = *time_buf;
+}
+
+int &GetTime()
+{
+    static int time;
+    return time;
+}
+
+
 
 

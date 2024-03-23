@@ -49,14 +49,13 @@ void setup()
 
     pinMode(beds[0].pumpValvePin, OUTPUT);
     pinMode(beds[1].pumpValvePin, OUTPUT);
-    pinMode(beds[2].pumpValvePin, OUTPUT);
 
     //Moisture sensor incialization
     for(size_t i = 0; i < GetBedSize(); i++)
         beds[i].moistureSensorValue = ReadMoisture()[i];   
     delay(50);
 
-    InitGardenbeds(); //inicialize
+    InitGardenbeds(); //inicialize beds
 
     //Initialize DHT22
     pinMode(DHT22_PIN, OUTPUT);
@@ -72,18 +71,22 @@ void setup()
 
 void loop() 
 {
-
-    auto &beds = GetGardenBeds();
-    //TO DO ALSO DONT FORGET THAT TIME IS NOT THE ONLY CONDITION, ALSO MOISTURE HAS TO BE TAKEN INTO CONSIDARATION
-    int time = 69; // TO DO IMPLEMENT LOGIC FOR RECIEVING TIME FROM MASTER 
     while(true)
     {
         delay(200);
         ReadMoisture();
-        IrrigationLogic();
+        if(GetTime() <= 7 && GetTime() >= 22)
+            IrrigationLogic();
+        else
+        {
+            /*
+                Just in case it was watering close to 7 am and it did not 
+                make in time. If this was not here, this would result in 
+                pump pumping while it is not needed. 
+            */
+            TurnOffPump(); 
+        }
+
         sender();
     }
-    
-    
-    //TO DO Implement logic with accepting JSON argument(bool) which turns off pump 
 }

@@ -56,6 +56,7 @@
 #define SENDER_HOST SPI2_HOST
 #endif
 
+
 //The semaphore indicating the slave is ready to receive stuff.
 
 static void IRAM_ATTR gpio_handshake_isr_handler(void* arg);
@@ -63,3 +64,5 @@ void sender();
 void ConfigureSPIbus();
 void SetUpHandShakeInterrupt();
 
+void UpdateTime(const char* time_buf);
+int &GetTime();

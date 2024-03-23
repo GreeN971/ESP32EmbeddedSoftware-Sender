@@ -38,12 +38,6 @@ std::array<int16_t, GetBedSize()> ReadMoisture()
     return moistureResultArr;
 }
 
-std::array<int16_t, GetBedSize()> ChangePumpValeState()
-{
-    auto &beds = GetGardenBeds();
-    return {};  //TODO
-}
-
 void CheckSoilMoisture(int pin)
 {
     int16_t moistVal = analogRead(12);
@@ -76,12 +70,10 @@ void EditValveState(bool state, const int &element)
 {
     auto &beds = GetGardenBeds();
     beds[element].pumpValveState = state;
-    //Serial.print(beds[element].pumpValveState);
 }
 
 void OpenCloseValve(const int &pinValve, bool state, const int &element)
 {
-    bool passState = state;
     auto &beds = GetGardenBeds();
     if(beds[element].pumpValveState == false)
     {
@@ -99,7 +91,6 @@ void OpenCloseValve(const int &pinValve, bool state, const int &element)
 
 void OpenValve(const int &pinValve, bool state, const int &element)
 {
-    bool passState = state;
     auto &beds = GetGardenBeds();
     state = true;
     digitalWrite(pinValve, HIGH);
@@ -108,7 +99,6 @@ void OpenValve(const int &pinValve, bool state, const int &element)
 
 void CloseValve(const int &pinValve, bool state, const int &element)
 {
-    bool passState = state;
     auto &beds = GetGardenBeds();
     state = false;
     digitalWrite(pinValve, LOW);
@@ -117,13 +107,6 @@ void CloseValve(const int &pinValve, bool state, const int &element)
 
 void IrrigationLogic()
 {
-    // dry = 2650,
-    // wet = 900,
-    // bed.moistureSensorPin = pinMoist;
-    // bed.moistureSensorValue = moistVal;
-    // bed.pumpValvePin = pinValve;
-    // bed.pumpValveState = valveVal;
-    int16_t moistureValue; //TO DO MAYBE LATER MOVE DECLARATION INTO FOR
     auto &beds = GetGardenBeds();
     
     for(size_t k = 0; k < GetBedSize(); k++)
@@ -132,17 +115,13 @@ void IrrigationLogic()
 
     for(size_t i = 0; i < GetBedSize(); i++)
     {
-        //Serial.println(beds[i].moistureSensorValue); 
         delay(50);
-
         if(beds[i].moistureSensorValue > 90) 
         {   
-            //Serial.println("PUMP IS OFF");
             CloseValve(beds[i].pumpValvePin, beds[i].pumpValveState, i); //Closes Valve
         }
         else if (beds[i].moistureSensorValue < 10)  
         {
-            //Serial.println("PUMP IS ON");
             OpenValve(beds[i].pumpValvePin, beds[i].pumpValveState, i); //ADD SMALL DELAY SO IT HAS TIME TO OPEN BEFORE 
             TurnOnPump();
         }
